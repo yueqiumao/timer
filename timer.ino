@@ -1,6 +1,13 @@
 /*
     月球猫的小闹钟
+    2788808483
     u2nn@qq.com
+
+    引脚对应关系
+    arduino    hpdl1414 
+    0-6        data0-data6    7位ascii码
+    7-8        a1, a2         2位LED地址，就是当前操作哪个LED，从最右边开始。
+    9          WR
 */
 
 long timestamp = 0;
@@ -25,7 +32,6 @@ void drawChar(int pos, char ch) {
     digitalWrite(9, LOW );
     delay(1);
 
-    // 写入完成
     digitalWrite(9, HIGH);
     delay(1);
 }
