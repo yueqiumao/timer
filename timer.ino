@@ -2,17 +2,15 @@
     月球猫的小闹钟
     u2nn@qq.com
 */
+
+long timestamp = 0;
+
 void drawChar(int pos, char ch) {
-    digitalWrite(7, HIGH);
+    digitalWrite(9, HIGH);
     delay(1);
 
-    // 设置地址
-    digitalWrite(9, (pos&1) ? HIGH : LOW );
+    digitalWrite(7, (pos&1) ? HIGH : LOW );
     digitalWrite(8, (pos&2) ? HIGH : LOW);
-    delay(1);
-
-    // 开始写入
-    digitalWrite(0, LOW );
     delay(1);
 
     digitalWrite(0, (ch&(1<<0) ? HIGH : LOW ));
@@ -24,15 +22,51 @@ void drawChar(int pos, char ch) {
     digitalWrite(6, (ch&(1<<6) ? HIGH : LOW ));
     delay(1);
 
+    digitalWrite(9, LOW );
+    delay(1);
+
     // 写入完成
-    digitalWrite(7, HIGH);
+    digitalWrite(9, HIGH);
     delay(1);
 }
 
-void setup() {
+void flashScreenOnce() {
+    for (int i = 0; i < 4; ++i) {
+        drawChar(i, '*');    
+    }
+    delay(500);
+    for (int i = 0; i < 4; ++i) {
+        drawChar(i, ' ');    
+    }
+    delay(500);
+}
 
+void setup() {
+    pinMode(0, OUTPUT);
+    pinMode(1, OUTPUT);
+    pinMode(2, OUTPUT);
+    pinMode(3, OUTPUT);
+    pinMode(4, OUTPUT);
+    pinMode(5, OUTPUT);
+    pinMode(6, OUTPUT);
+    pinMode(7, OUTPUT);
+    pinMode(8, OUTPUT);
+    pinMode(9, OUTPUT);
+
+    timestamp = millis() + 25l*60*1000;
 }
 
 void loop() {
+    if (timestamp >= millis()) {
+        long interval = (timestamp - millis()) / 1000;
+        int minute = interval / 60;
+        int second = interval % 60;
 
+        drawChar(3, '0' + (minute / 10 % 10));
+        drawChar(2, '0' + (minute % 10));
+        drawChar(1, '0' + (second / 10 % 10));
+        drawChar(0, '0' + (second % 10));
+    } else {
+        flashScreenOnce();
+    }
 }
