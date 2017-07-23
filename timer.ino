@@ -13,11 +13,11 @@
 long timestamp = 0;
 
 void drawChar(int pos, char ch) {
-    digitalWrite(9, HIGH);
+    digitalWrite(14, HIGH);
     delay(1);
 
-    digitalWrite(7, (pos&1) ? HIGH : LOW );
-    digitalWrite(8, (pos&2) ? HIGH : LOW);
+    digitalWrite(12, (pos&1) ? HIGH : LOW );
+    digitalWrite(13, (pos&2) ? HIGH : LOW);
     delay(1);
 
     digitalWrite(0, (ch&(1<<0) ? HIGH : LOW ));
@@ -26,13 +26,13 @@ void drawChar(int pos, char ch) {
     digitalWrite(3, (ch&(1<<3) ? HIGH : LOW ));
     digitalWrite(4, (ch&(1<<4) ? HIGH : LOW ));
     digitalWrite(5, (ch&(1<<5) ? HIGH : LOW ));
-    digitalWrite(6, (ch&(1<<6) ? HIGH : LOW ));
+    digitalWrite(15, (ch&(1<<6) ? HIGH : LOW ));
     delay(1);
 
-    digitalWrite(9, LOW );
+    digitalWrite(14, LOW );
     delay(1);
 
-    digitalWrite(9, HIGH);
+    digitalWrite(14, HIGH);
     delay(1);
 }
 
@@ -54,10 +54,10 @@ void setup() {
     pinMode(3, OUTPUT);
     pinMode(4, OUTPUT);
     pinMode(5, OUTPUT);
-    pinMode(6, OUTPUT);
-    pinMode(7, OUTPUT);
-    pinMode(8, OUTPUT);
-    pinMode(9, OUTPUT);
+    pinMode(15, OUTPUT);
+    pinMode(12, OUTPUT);
+    pinMode(13, OUTPUT);
+    pinMode(14, OUTPUT);
 
     timestamp = millis() + 25l*60*1000;
 }
