@@ -19,6 +19,8 @@
 long timestamp = 0;
 os_timer_t keyTimer;
 bool pressed = false;
+int cycleTime = 30l * 60 * 1000;
+int restTime = 5l * 60 * 1000; // 一次定时周期为30分钟，最后5分钟为休息时间，闪动显示。
 
 void drawChar(int pos, char ch) {
     digitalWrite(10, HIGH);
@@ -72,42 +74,59 @@ void pressHandler() {
 }
 
 void resetTimer() {
-    timestamp = millis() + 25l*60*1000;
-    // timestamp = 0;
+    timestamp = millis() + cycleTime;
 }
 
 void setup() {
-    pinMode(0, OUTPUT);
+    pinMode(0, OUTPUT); // 7bit
     pinMode(1, OUTPUT);
     pinMode(2, OUTPUT);
     pinMode(3, OUTPUT);
     pinMode(4, OUTPUT);
     pinMode(5, OUTPUT);
     pinMode(15, OUTPUT);
-    pinMode(12, OUTPUT);
+
+    pinMode(12, OUTPUT); //addr
     pinMode(13, OUTPUT);
-    pinMode(10, OUTPUT);
+
+    pinMode(10, OUTPUT); //wr
 
     pinMode(14, INPUT_PULLUP);
     attachInterrupt(14, intrKeyPress, FALLING);
 
     resetTimer();
-    Serial.begin(74880);
+    // Serial.begin(74880);
 }
 
 void loop() {
-    if (timestamp + (5 * 60 * 1000) >= millis()) {
-        long interval = (timestamp - millis()) / 1000;
-        // int minute = interval / 60;
-        // int second = interval % 60;
+    if (millis() < timestamp) {
+        long interval = (timestamp - millis());
+        bool rest;
+        interval -= restTime;
+        rest = interval < 0;
+        interval = abs(interval);
+        interval /= 1000;
 
-        // drawChar(3, '0' + (minute / 10 % 10));
-        // drawChar(2, '0' + (minute % 10));
-        // drawChar(1, '0' + (second / 10 % 10));
-        // drawChar(0, '0' + (second % 10));
-        char buff[32];
-        sprintf(buff, "%d", interval);
-        Serial.println(buff);
+        int minute = interval / 60;
+        int second = interval % 60;
+
+        // Serial.printf("%d %d\n", (second / 10 % 10), (second % 10));
+
+        drawChar(3, '0' + (minute / 10 % 10));
+        drawChar(2, '0' + (minute % 10));
+        drawChar(1, '0' + (second / 10 % 10));
+        drawChar(0, '0' + (second % 10));
+
+
+        if (rest) {
+            delay(500);
+            drawChar(3, ' ');
+            drawChar(2, ' ');
+            drawChar(1, ' ');
+            drawChar(0, ' ');
+            delay(500);
+        }
+
     } else {
         flashScreenOnce();
     }
